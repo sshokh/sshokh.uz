@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -7,19 +6,17 @@ const mono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "shokh.dev",
   description: "My portfolio",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${mono.className} h-full antialiased dark`}>
-      <body className="min-h-full flex flex-col container mx-auto bg-background text-accent-foreground">{children}</body>
+      <body className="min-h-screen container mx-auto lg:tracking-normal tracking-tighter bg-background text-accent-foreground justify-between">
+        {children}
+      </body>
     </html>
   );
 }
