@@ -20,7 +20,7 @@ function convertSecondsToTime(seconds) {
   const secs = Math.floor(total % 60);
 
   if (hours > 0) {
-    return `${hours}:${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+    return `${hours}:${minutes < 10 ? "0" : ""}${minutes}:${secs < 10 ? "0" : ""}${secs}`;
   }
 
   return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;

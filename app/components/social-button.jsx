@@ -1,3 +1,5 @@
+'use client';
+
 import { Check } from "@gravity-ui/icons";
 import { Button } from "@heroui/react";
 import { useState } from "react";
@@ -22,7 +24,13 @@ export function SocialButton({ social }) {
   }
 
   return (
-    <Button isIconOnly variant="outline" size="lg" className="[&_svg]:size-6" onClick={handleClick}>
+    <Button
+      isIconOnly
+      variant="outline"
+      size="lg"
+      className="[&_svg]:size-6"
+      onClick={handleClick}
+    >
       {isClicked ? <Check /> : icon}
     </Button>
   );

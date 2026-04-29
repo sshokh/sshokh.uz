@@ -7,8 +7,8 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "shokh.dev",
-  description: "My portfolio",
+  title: "sshokh.uz",
+  description: "Special portfolio I crafted for myself to display my work, skills as well as some personal achievements.",
 };
 
 export default function RootLayout({ children }) {

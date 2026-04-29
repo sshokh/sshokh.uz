@@ -6,84 +6,23 @@
 .default,
 [data-theme="light"],
 [data-theme="default"] {
-  /* Theme Colors (Light Mode) */
-  --accent: oklch(62.04% 0.195 253.83);
-  --accent-foreground: oklch(99.11% 0 0);
-  --background: oklch(97.02% 0.02 253.83);
-  --border: oklch(90% 0.02 253.83);
-  --danger: oklch(65.32% 0.2421 25.74);
-  --danger-foreground: oklch(99.11% 0 0);
-  --default: oklch(94% 0.02 253.83);
-  --default-foreground: oklch(21.03% 0.0059 253.83);
-  --field-background: oklch(100% 0.01 253.83);
-  --field-foreground: oklch(21.03% 0.02 253.83);
-  --field-placeholder: oklch(55.17% 0.04 253.83);
-  --focus: oklch(62.04% 0.195 253.83);
-  --foreground: oklch(21.03% 0.02 253.83);
-  --muted: oklch(55.17% 0.04 253.83);
-  --overlay: oklch(100% 0.006 253.83);
-  --overlay-foreground: oklch(21.03% 0.02 253.83);
-  --scrollbar: oklch(87.1% 0.02 253.83);
-  --segment: oklch(100% 0.02 253.83);
-  --segment-foreground: oklch(21.03% 0.02 253.83);
-  --separator: oklch(92% 0.02 253.83);
-  --success: oklch(73.29% 0.2012 150.81);
-  --success-foreground: oklch(21.03% 0.0059 150.81);
-  --surface: oklch(100% 0.01 253.83);
-  --surface-foreground: oklch(21.03% 0.02 253.83);
-  --surface-secondary: oklch(95.24% 0.016 253.83);
-  --surface-secondary-foreground: oklch(21.03% 0.02 253.83);
-  --surface-tertiary: oklch(93.73% 0.016 253.83);
-  --surface-tertiary-foreground: oklch(21.03% 0.02 253.83);
-  --warning: oklch(78.19% 0.1648 72.33);
-  --warning-foreground: oklch(21.03% 0.0059 72.33);
-
-  /* Border Radius */
   --radius: 0;
   --field-radius: 0;
-
-  /* Font Family */
-  /* Make sure to load JetBrains Mono font in your app */
   --font-sans: var(--font-jetbrains-mono);
 }
 
-.dark,
-[data-theme="dark"] {
-  color-scheme: dark;
-  /* Theme Colors (Dark Mode) */
-  --accent: oklch(62.04% 0.195 253.83);
-  --accent-foreground: oklch(99.11% 0 0);
-  --background: oklch(12% 0.02 253.83);
-  --border: oklch(28.128% 0.02015 251.601);
-  --danger: oklch(59.4% 0.2046 24.63);
-  --danger-foreground: oklch(99.11% 0 0);
-  --default: oklch(27.4% 0.02 253.83);
-  --default-foreground: oklch(99.11% 0 0);
-  --field-background: oklch(21.03% 0.04 253.83);
-  --field-foreground: oklch(99.11% 0.02 253.83);
-  --field-placeholder: oklch(70.5% 0.04 253.83);
-  --focus: oklch(62.04% 0.195 253.83);
-  --foreground: oklch(99.11% 0.02 253.83);
-  --muted: oklch(70.5% 0.04 253.83);
-  --overlay: oklch(21.03% 0.04 253.83);
-  --overlay-foreground: oklch(99.11% 0.02 253.83);
-  --scrollbar: oklch(70.5% 0.02 253.83);
-  --segment: oklch(39.64% 0.02 253.83);
-  --segment-foreground: oklch(99.11% 0.02 253.83);
-  --separator: oklch(25% 0.02 253.83);
-  --success: oklch(73.29% 0.2012 150.81);
-  --success-foreground: oklch(21.03% 0.0059 150.81);
-  --surface: oklch(21.03% 0.04 253.83);
-  --surface-foreground: oklch(99.11% 0.02 253.83);
-  --surface-secondary: oklch(25.7% 0.03 253.83);
-  --surface-secondary-foreground: oklch(99.11% 0.02 253.83);
-  --surface-tertiary: oklch(27.21% 0.03 253.83);
-  --surface-tertiary-foreground: oklch(99.11% 0.02 253.83);
-  --warning: oklch(82.03% 0.1444 76.34);
-  --warning-foreground: oklch(21.03% 0.0059 76.34);
-}
+@theme inline {
+  --animate-orbit: orbit calc(var(--duration) * 1s) linear infinite;
 
-b4 {
-  background-color: #02060d;
-  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230088f6' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+  @keyframes orbit {
+    0% {
+      transform: rotate(calc(var(--angle) * 1deg))
+        translateY(calc(var(--radius) * 1px)) rotate(calc(var(--angle) * -1deg));
+    }
+    100% {
+      transform: rotate(calc(var(--angle) * 1deg + 360deg))
+        translateY(calc(var(--radius) * 1px))
+        rotate(calc((var(--angle) * -1deg) - 360deg));
+    }
+  }
 }

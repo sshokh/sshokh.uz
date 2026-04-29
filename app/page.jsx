@@ -1,15 +1,14 @@
 "use client";
 
+import { Avatar, Card, ScrollShadow } from "@heroui/react";
 import {
-  Avatar,
-  Button,
-  Card,
-  CardDescription,
-  ScrollShadow,
-} from "@heroui/react";
-import { ActivityCard, SocialButton } from "./components";
+  ActivityCard,
+  SocialButton,
+  ProjectCard,
+  IconCloud,
+} from "./components";
 import { useState, useEffect } from "react";
-import { GitHub, Telegram } from "@/app/icons";
+import { GitHub, Telegram } from "@/app/icons/";
 import { ArrowDownRight } from "@gravity-ui/icons";
 import api from "@/app/utils/api";
 
@@ -36,16 +35,30 @@ const socials = [
 export default function Home() {
   const [activities, setActivities] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [skills, setSkills] = useState([]);
+  const [now, setNow] = useState(Date.now());
 
   async function fetchProjects() {
     const { data } = await api("/projects");
     setProjects(data);
   }
 
+  async function fetchSkills() {
+    const { data } = await api("/skills");
+    setSkills(data.map((s) => `https://cdn.simpleicons.org/${s.slug}/ffffff`));
+  }
+
   useEffect(() => {
     fetchProjects();
+    fetchSkills();
 
-    const socket = new WebSocket("ws://localhost:3000");
+    const interval = setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+
+    const socket = new WebSocket(
+      `ws:${process.env.NEXT_PUBLIC_BACKEND_URL.split("http:")[1]}`,
+    );
 
     socket.onopen = () => {
       console.log("WebSocket connection established");
@@ -54,7 +67,7 @@ export default function Home() {
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data.activities.length > 0) {
+        if (data.activities?.length) {
           setActivities(data.activities);
         }
       } catch (error) {
@@ -76,17 +89,17 @@ export default function Home() {
 
     return () => {
       socket.close();
-      setActivities([]);
+      clearInterval(interval);
     };
   }, []);
 
   return (
-    <main className="flex flex-col lg:py-16 py-8 gap-4 container mx-auto px-6 min-h-screen justify-between">
-      <section>
+    <main className="flex flex-col lg:py-16 py-8 gap-8 container mx-auto px-6 min-h-screen justify-between">
+      <section className="flex lg:flex-row flex-col gap-32">
         <div className="lg:hidden flex flex-col gap-4">
           <div className="flex gap-4">
             <Avatar className="size-32 rounded-none">
-              <Avatar.Image src="/face.jpg" alt="Rustamjanov Shokhjahon" />
+              <Avatar.Image src="/face-modified.jpg" alt="Shokhjahon" />
               <Avatar.Fallback>Shokhjahon</Avatar.Fallback>
             </Avatar>
             <div className="flex flex-col justify-between">
@@ -110,10 +123,10 @@ export default function Home() {
 
         <div className="lg:flex hidden gap-8">
           <Avatar className="size-48 rounded-none">
-            <Avatar.Image src="/face.jpg" alt="Rustamjanov Shokhjahon" />
+            <Avatar.Image src="/face-modified.jpg" alt="Shokhjahon" />
             <Avatar.Fallback>Shokhjahon</Avatar.Fallback>
           </Avatar>
-          <div className="flex flex-col justify-between">
+          <div className="flex flex-col h-min gap-2">
             <div className="space-y-2">
               <p className="lg:text-4xl text-xl">
                 Hi, I'm Shokhjahon{" "}
@@ -132,6 +145,17 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        <div className="relative flex h-58 w-full lg:w-58 flex-col items-center justify-center overflow-hidden">
+          <div className="bg-foreground text-background size-20 flex items-center justify-center rounded-full">
+            <p>STACK</p>
+          </div>
+          <IconCloud iconSize={30} radius={100} reverse speed={1}>
+            {skills.map((s, i) => (
+              <img src={s} key={i} alt={i} />
+            ))}
+          </IconCloud>
+        </div>
       </section>
       <section className="flex lg:flex-row flex-col gap-8">
         <div className="space-y-2">
@@ -140,7 +164,9 @@ export default function Home() {
           </p>
           <ScrollShadow orientation="vertical" className="space-y-4 max-h-68">
             {activities.length > 0 ? (
-              activities.map((a, i) => <ActivityCard activity={a} key={i} />)
+              activities.map((a, i) => (
+                <ActivityCard activity={a} key={i} now={now} />
+              ))
             ) : (
               <Card className="h-32 flex flex-col justify-center items-center gap-1">
                 <p>OFFLINE</p>
@@ -162,21 +188,7 @@ export default function Home() {
           >
             <div className="flex gap-4">
               {projects.map((p, i) => (
-                <Card
-                  key={i}
-                  className="min-w-80 p-4 text-card-foreground shadow-sm"
-                >
-                  <Card.Header>
-                    <Card.Title>{p.title}</Card.Title>
-                    <CardDescription>{p.description}</CardDescription>
-                  </Card.Header>
-                  <Card.Content>
-                    <img
-                      src={process.env.NEXT_PUBLIC_BACKEND_URL + p.images[0]}
-                      className="aspect-14/9"
-                    />
-                  </Card.Content>
-                </Card>
+                <ProjectCard key={i} project={p} />
               ))}
             </div>
           </ScrollShadow>
