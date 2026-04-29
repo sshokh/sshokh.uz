@@ -94,8 +94,8 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex flex-col lg:py-16 py-8 gap-8 container mx-auto px-6 min-h-screen justify-between">
-      <section className="flex lg:flex-row flex-col gap-32">
+    <main className="flex flex-col lg:py-16 py-8 gap-8 container max-w-max mx-auto px-6 min-h-screen justify-between">
+      <section className="flex lg:flex-row flex-col lg:gap-32 gap-8">
         <div className="lg:hidden flex flex-col gap-4">
           <div className="flex gap-4">
             <Avatar className="size-32 rounded-none">
