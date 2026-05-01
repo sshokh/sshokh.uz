@@ -1,5 +1,5 @@
 import { Clock } from "@gravity-ui/icons";
-import { Avatar, Card, CardHeader, Label, Meter } from "@heroui/react";
+import { Avatar, Card, CardHeader, Meter } from "@heroui/react";
 import { useEffect, useState } from "react";
 
 const ActivityTypes = {
@@ -50,14 +50,14 @@ export function ActivityCard({ activity }) {
   }, [timestamps.start, timestamps.end]);
 
   return (
-    <Card className="w-full flex-row h-32">
+    <Card className="flex-row h-32 lg:w-md">
       <div className="lg:w-4 w-2 flex items-center justify-center">
         <p className="-rotate-90 whitespace-nowrap text-xs font-bold">
           {ActivityTypes[type].label || "PLAYING"}
         </p>
       </div>
       <div className="relative">
-        {assets.smallImage && (
+        {assets?.smallImage && (
           <Avatar className="size-8 border-4 border-surface z-10 rounded-none absolute -bottom-1 -right-1">
             <Avatar.Image src={assets?.smallImage} alt={assets?.smallText} />
             <Avatar.Fallback>{assets?.smallText}</Avatar.Fallback>
@@ -68,9 +68,9 @@ export function ActivityCard({ activity }) {
           <Avatar.Fallback>{assets?.largeText}</Avatar.Fallback>
         </Avatar>
       </div>
-      <div className="flex flex-col justify-between">
-        <CardHeader className="space-y-0 text-xs lg:max-w-48 max-w-38">
-          <Card.Title className="pr-8">{name}</Card.Title>
+      <div className="flex flex-col justify-between truncate w-full">
+        <CardHeader className="space-y-0 text-xs">
+          <Card.Title className="pr-8 truncate">{name}</Card.Title>
           {details && (
             <Card.Description className="text-xs truncate">
               {details}
@@ -84,12 +84,12 @@ export function ActivityCard({ activity }) {
         </CardHeader>
 
         {type === 2 ? (
-          <div className="flex gap-3 min-w-60">
+          <div className="flex gap-3">
             <small>{convertSecondsToTime(elapsedTime)}</small>
             <Meter
               value={progress}
               size="sm"
-              className="lg:w-full w-xs"
+              className="w-full"
               aria-label="label"
             >
               <Meter.Track>

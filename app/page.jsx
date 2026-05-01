@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, Card, ScrollShadow } from "@heroui/react";
+import { Avatar, Card, ScrollShadow, Tooltip } from "@heroui/react";
 import {
   ActivityCard,
   SocialButton,
@@ -56,8 +56,10 @@ export default function Home() {
       setNow(Date.now());
     }, 1000);
 
+    const { protocol } = new URL(process.env.NEXT_PUBLIC_BACKEND_URL);
+
     const socket = new WebSocket(
-      `ws:${process.env.NEXT_PUBLIC_BACKEND_URL.split("https:")[1]}`,
+      `ws${protocol === "https" ? "s" : ""}:${process.env.NEXT_PUBLIC_BACKEND_URL.split("//")[1]}`,
     );
 
     socket.onopen = () => {
@@ -67,8 +69,8 @@ export default function Home() {
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data.activities?.length) {
-          setActivities(data.activities);
+        if (data.length) {
+          setActivities(data);
         }
       } catch (error) {
         console.error("Error parsing WebSocket message:", error);
@@ -152,7 +154,7 @@ export default function Home() {
           </div>
           <IconCloud iconSize={30} radius={100} reverse speed={1}>
             {skills.map((s, i) => (
-              <img src={s} key={i} alt={i} />
+              <img src={s} alt={i} />
             ))}
           </IconCloud>
         </div>

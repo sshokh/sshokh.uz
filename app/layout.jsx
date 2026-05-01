@@ -15,12 +15,6 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${mono.className} h-full antialiased dark`}>
-      <head>
-        <meta
-          http-equiv="Content-Security-Policy"
-          content="upgrade-insecure-requests"
-        ></meta>
-      </head>
       <body className="min-h-screen container mx-auto lg:tracking-normal tracking-tighter bg-background text-accent-foreground justify-between">
         {children}
       </body>
