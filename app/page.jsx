@@ -59,7 +59,7 @@ export default function Home() {
     const { protocol } = new URL(process.env.NEXT_PUBLIC_BACKEND_URL);
 
     const socket = new WebSocket(
-      `ws${protocol === "https" ? "s" : ""}:${process.env.NEXT_PUBLIC_BACKEND_URL.split("//")[1]}`,
+      `ws${protocol === "https:" ? "s" : ""}:${process.env.NEXT_PUBLIC_BACKEND_URL.split("//")[1]}`,
     );
 
     socket.onopen = () => {
