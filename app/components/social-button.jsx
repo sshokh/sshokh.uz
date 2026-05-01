@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Check } from "@gravity-ui/icons";
 import { Button } from "@heroui/react";
@@ -11,7 +11,7 @@ export function SocialButton({ social }) {
 
   function handleClick() {
     if (type === "link") {
-      window.open(value);
+      window.location.href = value;
     } else if (type === "copy") {
       navigator.clipboard.writeText(value);
 
