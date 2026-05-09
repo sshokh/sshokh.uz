@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, Card, ScrollShadow, Tooltip } from "@heroui/react";
+import { Avatar, Card, ScrollShadow } from "@heroui/react";
 import {
   ActivityCard,
   SocialButton,
@@ -11,10 +11,10 @@ import { useState, useEffect } from "react";
 import { GitHub, Telegram } from "@/app/icons/";
 import { ArrowDownRight } from "@gravity-ui/icons";
 import api from "@/app/utils/api";
+import resolveImage from "@/app/utils/app-icons";
 
 const bio = [
   "- Frontend web developer & part-time gamer.",
-  "- 2 years of experience",
   "- 16 year old",
   "- IELTS 7.5",
 ];
@@ -36,7 +36,6 @@ export default function Home() {
   const [activities, setActivities] = useState([]);
   const [projects, setProjects] = useState([]);
   const [skills, setSkills] = useState([]);
-  const [now, setNow] = useState(Date.now());
 
   async function fetchProjects() {
     const { data } = await api("/projects");
@@ -52,33 +51,64 @@ export default function Home() {
     fetchProjects();
     fetchSkills();
 
-    const interval = setInterval(() => {
-      setNow(Date.now());
-    }, 1000);
-
-    const { protocol } = new URL(process.env.NEXT_PUBLIC_BACKEND_URL);
-
-    const socket = new WebSocket(
-      `ws${protocol === "https:" ? "s" : ""}:${process.env.NEXT_PUBLIC_BACKEND_URL.split("//")[1]}`,
-    );
+    const socket = new WebSocket("wss://api.lanyard.rest/socket");
 
     socket.onopen = () => {
-      console.log("WebSocket connection established");
+      console.log("[WEBSOCKET] Connection established.");
     };
 
-    socket.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.length) {
-          setActivities(data);
-        }
-      } catch (error) {
-        console.error("Error parsing WebSocket message:", error);
+    socket.onmessage = async (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.op === 1) {
+        let heartbeat_interval = data.d?.heartbeat_interval;
+
+        setInterval(() => {
+          socket.send(JSON.stringify({ op: 3 }));
+        }, heartbeat_interval);
+
+        socket.send(
+          JSON.stringify({
+            op: 2,
+            d: {
+              subscribe_to_id: process.env.NEXT_PUBLIC_TARGET_ID,
+            },
+          }),
+        );
+      } else if (data.op === 0) {
+        const activityPromises = await Promise.all(
+          (data.d.activities ?? [])
+            .filter((a) => a.type !== 4)
+            .map(async (a) => ({
+              type: a.type ?? null,
+              name: a.name ?? null,
+              details: a.details ?? null,
+              state: a.state ?? null,
+              timestamps: a.timestamps ?? null,
+              assets: a.assets
+                ? {
+                    largeImage: await resolveImage(a.assets.large_image),
+                    largeText: a.assets.largeText ?? null,
+                    smallImage: await resolveImage(a.assets.small_image),
+                    smallText: a.assets.smallText ?? null,
+                  }
+                : a.application_id
+                  ? {
+                      largeImage: await resolveImage(null, a.application_id),
+                      largeText: a.name ?? null,
+                      smallImage: null,
+                      smallText: null,
+                    }
+                  : null,
+            })),
+        );
+
+        setActivities(activityPromises);
       }
     };
 
     socket.onclose = () => {
-      console.log("WebSocket connection closed");
+      console.log("[WEBSOCKET] Connection closed");
 
       setActivities([]);
     };
@@ -98,43 +128,41 @@ export default function Home() {
   return (
     <main className="flex flex-col lg:py-16 py-8 gap-8 container max-w-max mx-auto px-6 min-h-screen justify-between">
       <section className="flex lg:flex-row flex-col lg:gap-32 gap-8">
-        <div className="lg:hidden flex flex-col gap-4">
-          <div className="flex gap-4">
-            <Avatar className="size-32 rounded-none">
-              <Avatar.Image src="/face-modified.jpg" alt="Shokhjahon" />
-              <Avatar.Fallback>Shokhjahon</Avatar.Fallback>
-            </Avatar>
-            <div className="flex flex-col justify-between">
-              <div>
-                <p className="text-lg">Hi, I'm Shokhjahon</p>
-                <ol className="text-sm">
-                  {bio.map((b, i) => (
-                    <li key={i}>{b}</li>
-                  ))}
-                </ol>
-              </div>
+        <div className="lg:hidden flex gap-4">
+          <Avatar className="size-32 rounded-none">
+            <Avatar.Image src="/face-modified.jpg" alt="Shokhjahon" />
+            <Avatar.Fallback>Shokhjahon</Avatar.Fallback>
+          </Avatar>
+          <div className="flex flex-col space-y-1 justify-between">
+            <div>
+              <p className="text-base font-semibold">Hi, I'm Shokhjahon</p>
+              <ol className="text-sm text-muted">
+                {bio.map((b, i) => (
+                  <li key={i}>{b}</li>
+                ))}
+              </ol>
             </div>
-          </div>
 
-          <div className="space-x-2">
-            {socials.map((s, i) => (
-              <SocialButton key={i} social={s} />
-            ))}
+            <div className="space-x-2">
+              {socials.map((s, i) => (
+                <SocialButton key={i} social={s} />
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="lg:flex hidden gap-8">
+        <div className="lg:flex hidden gap-8 h-min">
           <Avatar className="size-48 rounded-none">
             <Avatar.Image src="/face-modified.jpg" alt="Shokhjahon" />
             <Avatar.Fallback>Shokhjahon</Avatar.Fallback>
           </Avatar>
-          <div className="flex flex-col h-min gap-2">
+          <div className="flex flex-col justify-between gap-2">
             <div className="space-y-2">
               <p className="lg:text-4xl text-xl">
                 Hi, I'm Shokhjahon{" "}
                 <span className="text-sm text-default">(shokh-ja-hon)</span>
               </p>
-              <ol>
+              <ol className="text-muted">
                 {bio.map((b, i) => (
                   <li key={i}>{b}</li>
                 ))}
@@ -166,9 +194,7 @@ export default function Home() {
           </p>
           <ScrollShadow orientation="vertical" className="space-y-4 max-h-68">
             {activities.length > 0 ? (
-              activities.map((a, i) => (
-                <ActivityCard activity={a} key={i} now={now} />
-              ))
+              activities.map((a, i) => <ActivityCard activity={a} key={i} />)
             ) : (
               <Card className="h-32 flex flex-col justify-center items-center gap-1">
                 <p>OFFLINE</p>

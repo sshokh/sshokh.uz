@@ -39,15 +39,19 @@ export function ActivityCard({ activity }) {
 
   useEffect(() => {
     if (!timestamps?.start) return;
+
     const start = new Date(timestamps.start).getTime();
+    const end = timestamps?.end ? new Date(timestamps.end).getTime() : null;
 
     const interval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - start) / 1000);
-      setElapsedTime(total ? Math.min(elapsed, total) : elapsed);
+      const now = Date.now();
+      const elapsed = Math.floor((now - start) / 1000);
+
+      setElapsedTime(end ? Math.min(elapsed, (end - start) / 1000) : elapsed);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timestamps.start, timestamps.end]);
+  }, [timestamps?.start, timestamps?.end]);
 
   return (
     <Card className="flex-row h-32 lg:w-md">

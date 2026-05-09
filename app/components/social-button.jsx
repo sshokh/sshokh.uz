@@ -27,8 +27,7 @@ export function SocialButton({ social }) {
     <Button
       isIconOnly
       variant="outline"
-      size="lg"
-      className="[&_svg]:size-6"
+      className="[&_svg]:size-6 size-9 lg:size-10"
       onClick={handleClick}
     >
       {isClicked ? <Check /> : icon}
