@@ -1,0 +1,60 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "title": "IT-Park",
+      "description": "This is a web-application developed for IT park to manage their training programs and issue certificates to students. It provides administrators with the ability to oversee study centers, appoint managers, organize and schedule courses, and issue customized certificates to participants who have completed their training. The goal is to ease the distribution of certificates, monitor the progress of students and ensure smooth functioning at various educational centers.",
+      "skills": ["vuedotjs", "shadcnui", "django"],
+      "images": [
+        "/media/it-park-1.png",
+        "/media/it-park-2.png",
+        "/media/it-park-3.png",
+        "/media/it-park-4.png"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Market Platform",
+      "description": "Supplier inventory management system for suppliers that sell to supermarkets. It tracks customer information, processes orders (differentiating between bulk and smaller purchase prices), and records payments. The system automatically assigns the correct price tier based on the order type and converts prices between USD and UZS. It also has a Telegram integration for notifying the supermarket managers about their orders.",
+      "skills": ["django", "vuedotjs", "shadcnui"],
+      "images": [
+        "/media/market-platform-1.png",
+        "/media/market-platform-2.png",
+        "/media/market-platform-3.png",
+        "/media/market-platform-4.png",
+        "/media/market-platform-5.png"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Test Platform",
+      "description": "A user friendly exam application with timer and answer support for students in case they get stuck during the test. All tries are saved and tracked, and there are clear statistics and overview of progress on the home page for better monitoring.",
+      "skills": ["shadcnui", "django", "vuedotjs"],
+      "images": [
+        "/media/test-platform-1.png",
+        "/media/test-platform-2.png",
+        "/media/test-platform-3.png",
+        "/media/test-platform-4.png"
+      ]
+    },
+    {
+      "id": 4,
+      "title": "sshokh.uz",
+      "description": "Special portfolio I crafted for myself to display my work, skills as well as some personal achievements.",
+      "skills": ["heroui", "nextdotjs"],
+      "images": ["/media/sshokh-1.png"]
+    }
+  ],
+  "skills": [
+    "javascript",
+    "python",
+    "nextdotjs",
+    "vuedotjs",
+    "django",
+    "express",
+    "heroui",
+    "shadcnui",
+    "sqlite",
+    "mongodb"
+  ]
+}

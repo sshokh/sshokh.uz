@@ -1,23 +1,21 @@
 "use client";
 
-import { Avatar, Card, ScrollShadow } from "@heroui/react";
+import { Avatar, Card, Link, ScrollShadow } from "@heroui/react";
 import {
   ActivityCard,
   SocialButton,
   ProjectCard,
   IconCloud,
+  Marquee,
 } from "./components";
 import { useState, useEffect } from "react";
 import { GitHub, Telegram } from "@/app/icons/";
 import { ArrowDownRight } from "@gravity-ui/icons";
-import api from "@/app/utils/api";
+import data from "@/data.json";
 import resolveImage from "@/app/utils/app-icons";
 
-const bio = [
-  "- Frontend web developer & part-time gamer.",
-  "- 16 year old",
-  "- IELTS 7.5",
-];
+const BIRTH = +new Date(2010, 0, 2);
+const calcAge = () => ((Date.now() - BIRTH) / 31557600000).toFixed(8);
 
 const socials = [
   {
@@ -36,22 +34,36 @@ export default function Home() {
   const [activities, setActivities] = useState([]);
   const [projects, setProjects] = useState([]);
   const [skills, setSkills] = useState([]);
+  const [age, setAge] = useState(calcAge);
 
-  async function fetchProjects() {
-    const { data } = await api("/projects");
-    setProjects(data);
-  }
-
-  async function fetchSkills() {
-    const { data } = await api("/skills");
-    setSkills(data.map((s) => `https://cdn.simpleicons.org/${s.slug}/ffffff`));
-  }
+  const bio = [
+    "// frontend web developer",
+    `// ${age} years in`,
+    "// proud holder of IELTS 7.5",
+    <span>
+      <span>// outside of code, I play (mostly) </span>
+      <Link href="https://steamcommunity.com/id/8996055260/">story games</Link>
+    </span>,
+  ];
 
   useEffect(() => {
-    fetchProjects();
-    fetchSkills();
+    setProjects(
+      data.projects.map((p) => ({
+        skills: [p.skills.map((s) => s.replace("dot", "."))],
+        ...p,
+      })),
+    );
+    setSkills(
+      data.skills.map((s) => ({
+        name: s.replace("dot", "."),
+        link: `https://cdn.simpleicons.org/${s}/ffffff`,
+      })),
+    );
+
+    const ageInterval = setInterval(() => setAge(calcAge()), 100);
 
     const socket = new WebSocket("wss://api.lanyard.rest/socket");
+    let heartbeatInterval;
 
     socket.onopen = () => {
       console.log("[WEBSOCKET] Connection established.");
@@ -61,9 +73,9 @@ export default function Home() {
       const data = JSON.parse(event.data);
 
       if (data.op === 1) {
-        let heartbeat_interval = data.d?.heartbeat_interval;
+        const heartbeat_interval = data.d?.heartbeat_interval;
 
-        setInterval(() => {
+        heartbeatInterval = setInterval(() => {
           socket.send(JSON.stringify({ op: 3 }));
         }, heartbeat_interval);
 
@@ -121,104 +133,109 @@ export default function Home() {
 
     return () => {
       socket.close();
-      clearInterval(interval);
+      clearInterval(ageInterval);
+
+      if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+      }
     };
   }, []);
 
   return (
-    <main className="flex flex-col lg:py-16 py-8 gap-8 container max-w-max mx-auto px-6 min-h-screen justify-between">
-      <section className="flex lg:flex-row flex-col lg:gap-32 gap-8">
-        <div className="lg:hidden flex gap-4">
-          <Avatar className="size-32 rounded-none">
-            <Avatar.Image src="/face-modified.jpg" alt="Shokhjahon" />
-            <Avatar.Fallback>Shokhjahon</Avatar.Fallback>
-          </Avatar>
-          <div className="flex flex-col space-y-1 justify-between">
+    <main className="flex bg-background border-x border-dashed flex-col justify-center py-8 container max-w-7xl  mx-auto min-h-screen">
+      <section className="border-y flex lg:flex-row flex-col w-full">
+        <div className="flex flex-col justify-between w-full">
+          <div>
+            <p className="flex items-center gap-1 border-b w-full">
+              01 // ABOUT ME <ArrowDownRight />
+            </p>
+            <div className="flex gap-4">
+              <Avatar className="size-48 rounded-none">
+                <Avatar.Image src="/face-modified.jpg" alt="Shokhjahon" />
+                <Avatar.Fallback>Shokhjahon</Avatar.Fallback>
+              </Avatar>
+              <div className="flex flex-col gap-2">
+                <div className="space-y-2">
+                  <p className="lg:text-4xl text-xl">shokhjahon</p>
+                  <ol className="text-muted lg:text-sm text-xs">
+                    {bio.map((b, i) => (
+                      <li key={i} suppressHydrationWarning>
+                        {b}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+                <div className="space-x-2">
+                  {socials.map((s, i) => (
+                    <SocialButton key={i} social={s} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p className="lg:flex hidden items-center gap-1 border-t ">
+            03 // TECH STACK <ArrowDownRight />
+          </p>
+        </div>
+
+        <div className="bg-lines lg:h-auto lg:w-54 lg:border-x border-y h-8 w-full border-dashed" />
+
+        <div className="flex flex-col">
+          <p className="flex items-center gap-1 border-b w-full">
+            02 // CURRENTLY <ArrowDownRight />
+          </p>
+          {activities.length > 0 ? (
             <div>
-              <p className="text-base font-semibold">Hi, I'm Shokhjahon</p>
-              <ol className="text-sm text-muted">
-                {bio.map((b, i) => (
-                  <li key={i}>{b}</li>
-                ))}
-              </ol>
-            </div>
-
-            <div className="space-x-2">
-              {socials.map((s, i) => (
-                <SocialButton key={i} social={s} />
+              {activities.map((a, i) => (
+                <ActivityCard activity={a} key={i} />
               ))}
             </div>
-          </div>
-        </div>
-
-        <div className="lg:flex hidden gap-8 h-min">
-          <Avatar className="size-48 rounded-none">
-            <Avatar.Image src="/face-modified.jpg" alt="Shokhjahon" />
-            <Avatar.Fallback>Shokhjahon</Avatar.Fallback>
-          </Avatar>
-          <div className="flex flex-col justify-between gap-2">
-            <div className="space-y-2">
-              <p className="lg:text-4xl text-xl">
-                Hi, I'm Shokhjahon{" "}
-                <span className="text-sm text-default">(shokh-ja-hon)</span>
-              </p>
-              <ol className="text-muted">
-                {bio.map((b, i) => (
-                  <li key={i}>{b}</li>
-                ))}
-              </ol>
-            </div>
-            <div className="space-x-2">
-              {socials.map((s, i) => (
-                <SocialButton key={i} social={s} />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="relative flex h-58 w-full lg:w-58 flex-col items-center justify-center overflow-hidden">
-          <div className="bg-foreground text-background size-20 flex items-center justify-center rounded-full">
-            <p>STACK</p>
-          </div>
-          <IconCloud iconSize={30} radius={100} reverse speed={1}>
-            {skills.map((s, i) => (
-              <img src={s} alt={i} />
-            ))}
-          </IconCloud>
+          ) : (
+            <Card className="w-md h-64 flex flex-col justify-center items-center gap-1">
+              <p>offline</p>
+              <small className="text-muted">sleeping or afk</small>
+            </Card>
+          )}
         </div>
       </section>
-      <section className="flex lg:flex-row flex-col gap-8">
-        <div className="space-y-2">
-          <p className="inline-flex items-center gap-1">
-            Currently <ArrowDownRight />
-          </p>
-          <ScrollShadow orientation="vertical" className="space-y-4 max-h-68">
-            {activities.length > 0 ? (
-              activities.map((a, i) => <ActivityCard activity={a} key={i} />)
-            ) : (
-              <Card className="h-32 flex flex-col justify-center items-center gap-1">
-                <p>OFFLINE</p>
-                <small className="text-muted">
-                  If I am online, it will show up here!
-                </small>
-              </Card>
-            )}
-          </ScrollShadow>
-        </div>
-        <div className="space-y-2">
-          <p className="inline-flex items-center gap-1">
-            Projects <ArrowDownRight />
+      <section className="min-w-0 w-full overflow-hidden">
+        <div className="bg-lines lg:hidden flex border-y h-8 w-full border-dashed" />
+        <p className="lg:hidden flex items-center gap-1 border-b w-full">
+          03 // TECH STACK <ArrowDownRight />
+        </p>
+        <Marquee>
+          {skills.map((s, i) => (
+            <div
+              key={s.name}
+              className="flex gap-2 items-center justify-center p-2 border-r"
+            >
+              <img src={s.link} alt={i} className="size-4" />
+              <p>{s.name}</p>
+            </div>
+          ))}
+        </Marquee>
+      </section>
+      <section className="flex lg:flex-row flex-col border-y">
+        <div className="bg-lines lg:hidden flex border-y h-8 w-full border-dashed" />
+        <div className="min-w-0 w-full">
+          <p className="flex items-center gap-1 border-b w-full">
+            04 // PROJECTS <ArrowDownRight />
           </p>
 
           <ScrollShadow
             orientation="horizontal"
-            className="max-w-3xl [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            hideScrollBar
+            className="w-full flex"
           >
-            <div className="flex gap-4">
-              {projects.map((p, i) => (
-                <ProjectCard key={i} project={p} />
-              ))}
-            </div>
+            {projects.map((p, i) => (
+              <div key={i} className="flex">
+                <ProjectCard project={p} />
+                {i < projects.length - 1 && (
+                  <div className="bg-lines w-6 border-x border-dashed" />
+                )}
+              </div>
+            ))}
           </ScrollShadow>
         </div>
       </section>

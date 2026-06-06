@@ -1,5 +1,5 @@
 import { Clock } from "@gravity-ui/icons";
-import { Avatar, Card, CardHeader, Meter } from "@heroui/react";
+import { Avatar, Card, ProgressBar } from "@heroui/react";
 import { useEffect, useState } from "react";
 
 const ActivityTypes = {
@@ -54,56 +54,53 @@ export function ActivityCard({ activity }) {
   }, [timestamps?.start, timestamps?.end]);
 
   return (
-    <Card className="flex-row h-32 lg:w-md">
+    <Card className="flex-row h-32 lg:w-md flex items-center gap-4 border-b-0">
       <div className="lg:w-4 w-2 flex items-center justify-center">
         <p className="-rotate-90 whitespace-nowrap text-xs font-bold">
           {ActivityTypes[type].label || "PLAYING"}
         </p>
       </div>
+
       <div className="relative">
         {assets?.smallImage && (
-          <Avatar className="size-8 border-4 border-surface z-10 rounded-none absolute -bottom-1 -right-1">
-            <Avatar.Image src={assets?.smallImage} alt={assets?.smallText} />
+          <Avatar className="size-8 rounded-none border-surface border-4 z-10 absolute -bottom-0.75 -right-0.75">
+            <Avatar.Image src={assets?.smallImage} />
             <Avatar.Fallback>{assets?.smallText}</Avatar.Fallback>
           </Avatar>
         )}
-        <Avatar className="size-24 rounded-none">
-          <Avatar.Image src={assets?.largeImage} alt={assets?.largeText} />
-          <Avatar.Fallback>{assets?.largeText}</Avatar.Fallback>
-        </Avatar>
+        <div className="size-24">
+          <img src={assets?.largeImage} alt={assets?.largeText} />
+        </div>
       </div>
-      <div className="flex flex-col justify-between truncate w-full">
-        <CardHeader className="space-y-0 text-xs">
-          <Card.Title className="pr-8 truncate">{name}</Card.Title>
+
+      <div className="flex flex-col justify-between h-full truncate w-full">
+        <div className="space-y-0.5 text-sm pr-8">
+          <div className="truncate font-semibold">{name}</div>
           {details && (
-            <Card.Description className="text-xs truncate">
-              {details}
-            </Card.Description>
+            <div className="text-xs truncate text-muted">{details}</div>
           )}
-          {state && (
-            <Card.Description className="text-xs truncate">
-              {state}
-            </Card.Description>
-          )}
-        </CardHeader>
+          {state && <div className="text-xs truncate text-muted">{state}</div>}
+        </div>
 
         {type === 2 ? (
-          <div className="flex gap-3">
-            <small>{convertSecondsToTime(elapsedTime)}</small>
-            <Meter
+          <div className="flex gap-3 items-center">
+            <small className="text-muted">
+              {convertSecondsToTime(elapsedTime)}
+            </small>
+            <ProgressBar
               value={progress}
               size="sm"
-              className="w-full"
-              aria-label="label"
+              aria-label="music-progress"
+              color="default"
             >
-              <Meter.Track>
-                <Meter.Fill />
-              </Meter.Track>
-            </Meter>
-            <small>{convertSecondsToTime(total)}</small>
+              <ProgressBar.Track>
+                <ProgressBar.Fill />
+              </ProgressBar.Track>
+            </ProgressBar>
+            <small className="text-muted">{convertSecondsToTime(total)}</small>
           </div>
         ) : (
-          <small className="inline-flex gap-1 items-center">
+          <small className="flex gap-1 items-center text-muted">
             <Clock />
             {convertSecondsToTime(elapsedTime)}
           </small>
