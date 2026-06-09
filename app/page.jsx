@@ -97,21 +97,19 @@ export default function Home() {
               details: a.details ?? null,
               state: a.state ?? null,
               timestamps: a.timestamps ?? null,
-              assets: a.assets
+              assets: a.application_id
                 ? {
+                    largeImage: await resolveImage(null, a.application_id),
+                    largeText: a.name ?? null,
+                    smallImage: null,
+                    smallText: null,
+                  }
+                : {
                     largeImage: await resolveImage(a.assets.large_image),
                     largeText: a.assets.largeText ?? null,
                     smallImage: await resolveImage(a.assets.small_image),
                     smallText: a.assets.smallText ?? null,
-                  }
-                : a.application_id
-                  ? {
-                      largeImage: await resolveImage(null, a.application_id),
-                      largeText: a.name ?? null,
-                      smallImage: null,
-                      smallText: null,
-                    }
-                  : null,
+                  },
             })),
         );
 
