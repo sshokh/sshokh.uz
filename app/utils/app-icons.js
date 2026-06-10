@@ -17,6 +17,8 @@ const resolveImage = async (image, id = null) => {
     }
   }
 
+  if (typeof image !== "string") return null;
+
   if (image.startsWith("mp:external/")) {
     return image.replace(
       "mp:external/",

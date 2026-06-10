@@ -91,26 +91,24 @@ export default function Home() {
         const activityPromises = await Promise.all(
           (data.d.activities ?? [])
             .filter((a) => a.type !== 4)
-            .map(async (a) => ({
-              type: a.type ?? null,
-              name: a.name ?? null,
-              details: a.details ?? null,
-              state: a.state ?? null,
-              timestamps: a.timestamps ?? null,
-              assets: a.application_id
-                ? {
-                    largeImage: await resolveImage(null, a.application_id),
-                    largeText: a.name ?? null,
-                    smallImage: null,
-                    smallText: null,
-                  }
-                : {
-                    largeImage: await resolveImage(a.assets.large_image),
-                    largeText: a.assets.largeText ?? null,
-                    smallImage: await resolveImage(a.assets.small_image),
-                    smallText: a.assets.smallText ?? null,
-                  },
-            })),
+            .map(async (a) => {
+              const assets = a.assets || {};
+              const appId = a.application_id;
+
+              return {
+                type: a.type ?? 0,
+                name: a.name ?? "Unknown",
+                details: a.details ?? null,
+                state: a.state ?? null,
+                timestamps: a.timestamps ?? null,
+                assets: {
+                  largeImage: await resolveImage(assets.large_image, appId),
+                  largeText: assets.large_text ?? a.name ?? null,
+                  smallImage: await resolveImage(assets.small_image, appId),
+                  smallText: assets.small_text ?? null,
+                },
+              };
+            }),
         );
 
         setActivities(activityPromises);

@@ -57,7 +57,7 @@ export function ActivityCard({ activity }) {
     <Card className="flex-row h-32 lg:w-md flex items-center gap-4 border-b-0">
       <div className="lg:w-4 w-2 flex items-center justify-center">
         <p className="-rotate-90 whitespace-nowrap text-xs font-bold">
-          {ActivityTypes[type].label || "PLAYING"}
+          {ActivityTypes[type]?.label || "PLAYING"}
         </p>
       </div>
 
@@ -68,8 +68,18 @@ export function ActivityCard({ activity }) {
             <Avatar.Fallback>{assets?.smallText}</Avatar.Fallback>
           </Avatar>
         )}
-        <div className="size-24">
-          <img src={assets?.largeImage} alt={assets?.largeText} />
+        <div className="size-24 bg-content2 flex items-center justify-center overflow-hidden">
+          {assets?.largeImage ? (
+            <img
+              src={assets?.largeImage}
+              alt={assets?.largeText}
+              className="size-full object-cover"
+            />
+          ) : (
+            <p className="text-xs text-center p-2 font-bold uppercase truncate">
+              {name}
+            </p>
+          )}
         </div>
       </div>
 
